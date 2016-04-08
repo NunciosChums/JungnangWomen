@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
       {
         refreshLayout.setRefreshing(false);
 
-        if (response == null || !response.isSuccess() || response.body() == null)
+        if (response == null || !response.isSuccessful() || response.body() == null)
         {
           displayErrorString(getString(R.string.no_result));
           return;

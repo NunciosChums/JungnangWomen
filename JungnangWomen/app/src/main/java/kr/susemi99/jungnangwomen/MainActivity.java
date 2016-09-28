@@ -1,6 +1,10 @@
 package kr.susemi99.jungnangwomen;
 
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.List;
+
 import kr.susemi99.jungnangwomen.adapters.ClassListAdapter;
+import kr.susemi99.jungnangwomen.application.MyApp;
 import kr.susemi99.jungnangwomen.listeners.EndlessRecyclerViewScrollListener;
 import kr.susemi99.jungnangwomen.models.RowItem;
 import kr.susemi99.jungnangwomen.models.WomenResourcesClassParentItem;
@@ -18,8 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
   private static final int OFFSET = 20;
 
   private ClassListAdapter adapter;
@@ -29,8 +35,7 @@ public class MainActivity extends AppCompatActivity
   private int startIndex, endIndex;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState)
-  {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity
       load();
     });
 
-    adapter = new ClassListAdapter();
+    adapter = new ClassListAdapter(itemClickListener);
     emptyTextView = (TextView) findViewById(android.R.id.empty);
 
     RecyclerView listView = (RecyclerView) findViewById(R.id.list);
@@ -62,62 +67,74 @@ public class MainActivity extends AppCompatActivity
     load();
   }
 
-  private void resetIndex()
-  {
+  private void resetIndex() {
     startIndex = 1;
     endIndex = OFFSET;
     adapter.clear();
   }
 
-  private void load()
-  {
+  private void load() {
     emptyTextView.setVisibility(View.GONE);
 
-    WomenService.api().list(startIndex, endIndex).enqueue(new Callback<WomenResourcesClassParentItem>()
-    {
+    WomenService.api().list(startIndex, endIndex).enqueue(new Callback<WomenResourcesClassParentItem>() {
       @Override
-      public void onResponse(Call<WomenResourcesClassParentItem> call, Response<WomenResourcesClassParentItem> response)
-      {
+      public void onResponse(Call<WomenResourcesClassParentItem> call, Response<WomenResourcesClassParentItem> response) {
         refreshLayout.setRefreshing(false);
 
-        if (response == null || !response.isSuccessful() || response.body() == null)
-        {
+        if(response == null || !response.isSuccessful() || response.body() == null) {
           displayErrorString(getString(R.string.no_result));
           return;
         }
 
         WomenResourcesClassParentItem item = response.body();
 
-        if (item.classItem == null)
-        {
+        if(item.classItem == null) {
           return;
         }
 
-        if (item.classItem.rows.length == 0)
-        {
+        if(item.classItem.rows.length == 0) {
           displayErrorString(getString(R.string.no_result));
           return;
         }
 
-        for (RowItem row : item.classItem.rows)
-        {
+        for (RowItem row : item.classItem.rows) {
           adapter.add(row);
         }
         adapter.notifyDataSetChanged();
       }
 
       @Override
-      public void onFailure(Call<WomenResourcesClassParentItem> call, Throwable t)
-      {
+      public void onFailure(Call<WomenResourcesClassParentItem> call, Throwable t) {
         refreshLayout.setRefreshing(false);
         displayErrorString(t.getLocalizedMessage());
       }
     });
   }
 
-  private void displayErrorString(String string)
-  {
+  private void displayErrorString(String string) {
     emptyTextView.setText(string);
     emptyTextView.setVisibility(View.VISIBLE);
   }
+
+  /*******************
+   * listener
+   *******************/
+  private View.OnClickListener itemClickListener = view -> {
+    String url = (String) view.getTag();
+    String PACKAGE_NAME = "com.android.chrome";
+
+    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().setShowTitle(true).build();
+    customTabsIntent.intent.setData(Uri.parse(url));
+
+    List<ResolveInfo> resolveInfoList = MyApp.context().getPackageManager()
+                                             .queryIntentActivities(customTabsIntent.intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+    for (ResolveInfo resolveInfo : resolveInfoList) {
+      String packageName = resolveInfo.activityInfo.packageName;
+      if(PACKAGE_NAME.equals(packageName))
+        customTabsIntent.intent.setPackage(PACKAGE_NAME);
+    }
+
+    customTabsIntent.launchUrl(MainActivity.this, Uri.parse(url));
+  };
 }

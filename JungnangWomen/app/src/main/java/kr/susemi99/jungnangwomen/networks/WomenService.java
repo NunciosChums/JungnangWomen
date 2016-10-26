@@ -9,17 +9,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public final class WomenService
-{
-  public static ListAPI api()
-  {
-    String host = "http://openapi.seoul.go.kr:8088/" + MyApp.context().getString(R.string.my_key) + "/json/SeoulJungNangWomenResourcesClass/";
+public final class WomenService {
+  public static ListAPI api() {
+    String host = "http://openapi.seoul.go.kr:8088/" + MyApp.context()
+                                                            .getString(R.string.my_key) + "/json/SeoulJungNangWomenResourcesClass/";
     Retrofit retrofit = new Retrofit.Builder().baseUrl(host).addConverterFactory(GsonConverterFactory.create()).build();
     return retrofit.create(ListAPI.class);
   }
 
-  public interface ListAPI
-  {
+  public interface ListAPI {
     @GET("{start_index}/{end_index}")
     Call<WomenResourcesClassParentItem> list(@Path("start_index") int startIndex, @Path("end_index") int endIndex);
   }

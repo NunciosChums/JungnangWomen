@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import kr.susemi99.jungnangwomen.adapters.ClassListAdapter;
-import kr.susemi99.jungnangwomen.application.MyApp;
 import kr.susemi99.jungnangwomen.listeners.EndlessRecyclerViewScrollListener;
 import kr.susemi99.jungnangwomen.models.RowItem;
 import kr.susemi99.jungnangwomen.models.WomenResourcesClassParentItem;
@@ -38,20 +37,20 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    refreshLayout = (SwipeRefreshLayout) findViewById(R.id.layout_refresh);
+    refreshLayout = findViewById(R.id.layout_refresh);
     refreshLayout.setOnRefreshListener(() -> {
       resetIndex();
       load();
     });
 
     adapter = new ClassListAdapter(itemClickListener);
-    emptyTextView = (TextView) findViewById(android.R.id.empty);
+    emptyTextView = findViewById(android.R.id.empty);
 
-    RecyclerView listView = (RecyclerView) findViewById(R.id.list);
-    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+    RecyclerView listView = findViewById(R.id.list);
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
     listView.setLayoutManager(linearLayoutManager);
     listView.setAdapter(adapter);
     listView.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -81,18 +80,13 @@ public class MainActivity extends AppCompatActivity {
       public void onResponse(Call<WomenResourcesClassParentItem> call, Response<WomenResourcesClassParentItem> response) {
         refreshLayout.setRefreshing(false);
 
-        if(response == null || !response.isSuccessful() || response.body() == null) {
+        if (response == null || !response.isSuccessful() || response.body() == null) {
           displayErrorString(getString(R.string.no_result));
           return;
         }
 
         WomenResourcesClassParentItem item = response.body();
-
-        if(item.classItem == null) {
-          return;
-        }
-
-        if(item.classItem.rows.length == 0) {
+        if (item == null || item.classItem == null || item.classItem.rows.length == 0) {
           displayErrorString(getString(R.string.no_result));
           return;
         }
@@ -126,15 +120,13 @@ public class MainActivity extends AppCompatActivity {
     CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().setShowTitle(true).build();
     customTabsIntent.intent.setData(Uri.parse(url));
 
-    List<ResolveInfo> resolveInfoList = MyApp.context().getPackageManager()
-                                             .queryIntentActivities(customTabsIntent.intent, PackageManager.MATCH_DEFAULT_ONLY);
+    List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(customTabsIntent.intent, PackageManager.MATCH_DEFAULT_ONLY);
 
     for (ResolveInfo resolveInfo : resolveInfoList) {
       String packageName = resolveInfo.activityInfo.packageName;
-      if(PACKAGE_NAME.equals(packageName))
-        customTabsIntent.intent.setPackage(PACKAGE_NAME);
+      if (PACKAGE_NAME.equals(packageName)) { customTabsIntent.intent.setPackage(PACKAGE_NAME); }
     }
 
-    customTabsIntent.launchUrl(MainActivity.this, Uri.parse(url));
+    customTabsIntent.launchUrl(getApplicationContext(), Uri.parse(url));
   };
 }

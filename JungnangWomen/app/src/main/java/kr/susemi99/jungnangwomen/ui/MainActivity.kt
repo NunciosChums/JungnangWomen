@@ -78,13 +78,14 @@ class MainActivity : AppCompatActivity() {
 
   private fun loadData() {
     WomenService.list(startIndex, endIndex)
-      .map { it.classItem.rows }
       .subscribe(
         {
-          classListAdapter.addAll(it)
+          if (it.result == null) {
+            classListAdapter.addAll(it.classItem.rows)
+          }
 
           if (classListAdapter.itemCount == 0) {
-            displayErrorLabel()
+            displayErrorLabel(it.result?.message)
           }
         },
         {

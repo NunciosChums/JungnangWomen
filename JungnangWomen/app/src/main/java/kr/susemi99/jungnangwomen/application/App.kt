@@ -1,9 +1,9 @@
 package kr.susemi99.jungnangwomen.application
 
 import android.app.Application
-import android.util.Log
-import com.uber.rxdogtag.RxDogTag
-import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import kr.susemi99.jungnangwomen.util.Logg
+import rxdogtag2.RxDogTag
 
 class App : Application() {
   companion object {
@@ -16,6 +16,6 @@ class App : Application() {
     instance = this
 
     RxDogTag.install()
-    RxJavaPlugins.setErrorHandler { Log.w("APP#", it) }
+    RxJavaPlugins.setErrorHandler { Logg.w(it) }
   }
 }

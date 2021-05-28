@@ -9,14 +9,16 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.main_activity.*
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import kr.susemi99.jungnangwomen.R
+import kr.susemi99.jungnangwomen.api.WomenService
 import kr.susemi99.jungnangwomen.application.App
-import kr.susemi99.jungnangwomen.network.WomenService
+import kr.susemi99.jungnangwomen.databinding.MainActivityBinding
 
 class MainActivity : AppCompatActivity() {
+  private lateinit var binding: MainActivityBinding
+
   companion object {
     const val OFFSET = 20
   }
@@ -24,13 +26,15 @@ class MainActivity : AppCompatActivity() {
   private val classListAdapter = ClassListAdapter()
   private var startIndex = 1
   private var endIndex = OFFSET
-  private val disposable = CompositeDisposable()
+  private val disposableBag = CompositeDisposable()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.main_activity)
+    binding = MainActivityBinding.inflate(layoutInflater).also {
+      setContentView(it.root)
+    }
 
-    classListView.apply {
+    binding.classListView.apply {
       adapter = classListAdapter
 
       val currentLayoutManager = layoutManager as LinearLayoutManager
@@ -50,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     super.onDestroy()
-    disposable.clear()
+    disposableBag.clear()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,9 +73,9 @@ class MainActivity : AppCompatActivity() {
   private fun reset() {
     startIndex = 1
     endIndex = OFFSET
-    errorLabel.isGone = true
+    binding.errorLabel.isGone = true
     classListAdapter.clear()
-    disposable.clear()
+    disposableBag.clear()
 
     loadData()
   }
@@ -93,11 +97,11 @@ class MainActivity : AppCompatActivity() {
             displayErrorLabel(it.localizedMessage)
           }
         }
-      ).addTo(disposable)
+      ).addTo(disposableBag)
   }
 
   private fun displayErrorLabel(string: String? = getString(R.string.no_result)) {
-    errorLabel.apply {
+    binding.errorLabel.apply {
       text = string
       isVisible = true
     }

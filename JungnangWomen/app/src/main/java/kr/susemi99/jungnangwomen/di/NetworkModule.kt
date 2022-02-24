@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -50,6 +51,7 @@ object NetworkModule {
     return "http://openapi.seoul.go.kr:8088/${BuildConfig.requestKey}/json/SeoulJungNangWomenResourcesClass/"
   }
 
+  @ExperimentalSerializationApi
   @Provides
   @Singleton
   fun provideRetrofit(okHttpClient: OkHttpClient, json: Json, url: String): Retrofit =

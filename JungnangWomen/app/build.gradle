@@ -2,8 +2,8 @@ plugins {
   id 'com.android.application'
   id 'org.jetbrains.kotlin.android'
   id 'kotlinx-serialization'
-  id 'dagger.hilt.android.plugin'
   id 'kotlin-kapt'
+  id 'dagger.hilt.android.plugin'
 }
 
 def requestKeyPropertiesFile = rootProject.file("request_key.properties")

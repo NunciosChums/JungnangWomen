@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
   package="kr.susemi99.jungnangwomen">
 
   <uses-permission android:name="android.permission.INTERNET" />
 
   <application
-    android:name=".application.App"
-    android:allowBackup="true"
+    android:name=".App"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/AppTheme"
-    android:usesCleartextTraffic="true"
-    tools:ignore="GoogleAppIndexingWarning">
-    <activity android:name=".ui.MainActivity">
+    android:theme="@style/Theme.JungnangWomen"
+    android:usesCleartextTraffic="true">
+    <activity
+      android:name=".MainActivity"
+      android:exported="true"
+      android:label="@string/app_name"
+      android:theme="@style/Theme.JungnangWomen">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 

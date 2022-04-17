@@ -1,8 +1,10 @@
 package kr.susemi99.jungnangwomen.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WomenResourcesClassParentItem(
-  @SerializedName("SeoulJungNangWomenResourcesClass") val classItem: WomenResourcesClassItem,
-  @SerializedName("RESULT") val result: ResultItem?
+  @SerialName("SeoulJungNangWomenResourcesClass") val classItem: WomenResourcesClassItem? = null,
+  @SerialName("RESULT") val result: ResultItem? = null
 )

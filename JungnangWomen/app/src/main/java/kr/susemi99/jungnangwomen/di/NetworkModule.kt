@@ -36,6 +36,7 @@ object NetworkModule {
   fun provideConverterFactory(): Json {
     return Json {
       ignoreUnknownKeys = true
+      coerceInputValues = true
       encodeDefaults = true
       isLenient = true
 

@@ -6,9 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,33 +28,34 @@ import kotlinx.coroutines.launch
 import kr.susemi99.jungnangwomen.R
 import kr.susemi99.jungnangwomen.ui.theme.RowTitleColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScene() {
   val viewModel = viewModel<MainSceneViewModel>()
   val listItems = viewModel.list.collectAsLazyPagingItems()
-  val scaffoldState = rememberScaffoldState()
   val scrollState = rememberLazyListState()
   val coroutineScope = rememberCoroutineScope()
   val context = LocalContext.current
 
   Scaffold(
-    scaffoldState = scaffoldState,
     topBar = {
-      TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) }, actions = {
-        IconButton(onClick = {
-          listItems.refresh()
-          coroutineScope.launch {
-            scrollState.scrollToItem(0)
+      TopAppBar(
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+          IconButton(onClick = {
+            listItems.refresh()
+            coroutineScope.launch {
+              scrollState.scrollToItem(0)
+            }
+          }) {
+            Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
           }
-        }) {
-          Icon(imageVector = Icons.Default.Refresh, contentDescription = "")
-        }
-      })
-    }) {
+        })
+    }) { padding ->
     if (listItems.itemCount == 0 && listItems.loadState.prepend.endOfPaginationReached) {
       NoResultView()
     } else {
-      LazyColumn(state = scrollState) {
+      LazyColumn(state = scrollState, modifier = Modifier.padding(padding)) {
         items(listItems) {
           Column(modifier = Modifier
             .clickable { Intent(Intent.ACTION_VIEW, Uri.parse(it?.url)).also { context.startActivity(it) } }

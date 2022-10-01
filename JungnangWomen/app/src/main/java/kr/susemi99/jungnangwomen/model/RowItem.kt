@@ -38,17 +38,6 @@ data class RowItem(
   @SerialName("ONLINE_RECEIVE_FLAG") val onlineReceiveFlag: String,
   @SerialName("URL") val url: String
 ) {
-//  fun displayHowToRegist(): String {
-//    val result = arrayListOf<String>()
-//    if (visitReceiveFlag == "Y") {
-//      result.add("방문")
-//    }
-//    if (onlineReceiveFlag == "Y") {
-//      result.add("온라인")
-//    }
-//    return result.joinToString(", ")
-//  }
-
   /**
    * 난이도
    */

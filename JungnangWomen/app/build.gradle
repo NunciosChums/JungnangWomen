@@ -6,10 +6,6 @@ plugins {
   id 'dagger.hilt.android.plugin'
 }
 
-def requestKeyPropertiesFile = rootProject.file("request_key.properties")
-def requestKeyProperties = new Properties()
-requestKeyProperties.load(new FileInputStream(requestKeyPropertiesFile))
-
 android {
   namespace 'kr.susemi99.jungnangwomen'
   compileSdk 33
@@ -25,8 +21,6 @@ android {
     vectorDrawables {
       useSupportLibrary true
     }
-
-    buildConfigField "String", "requestKey", requestKeyProperties['key']
   }
 
   buildTypes {

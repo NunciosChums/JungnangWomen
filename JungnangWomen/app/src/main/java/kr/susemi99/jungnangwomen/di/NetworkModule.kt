@@ -1,5 +1,6 @@
 package kr.susemi99.jungnangwomen.di
 
+import android.app.Application
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -12,6 +13,7 @@ import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.plus
 import kr.susemi99.jungnangwomen.BuildConfig
 import kr.susemi99.jungnangwomen.api.Api
+import kr.susemi99.jungnangwomen.extension.toString
 import kr.susemi99.jungnangwomen.util.serializer.LocalDateSerializer
 import kr.susemi99.jungnangwomen.util.serializer.LocalTimeSerializer
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,8 +50,8 @@ object NetworkModule {
   }
 
   @Provides
-  fun provideUrl(): String {
-    return "http://openapi.seoul.go.kr:8088/${BuildConfig.requestKey}/json/SeoulJungNangWomenResourcesClass/"
+  fun provideUrl(application: Application): String {
+    return "http://openapi.seoul.go.kr:8088/${application.assets.open("request_key.txt").toString}/json/SeoulJungNangWomenResourcesClass/"
   }
 
   @ExperimentalSerializationApi

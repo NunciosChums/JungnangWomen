@@ -58,6 +58,7 @@ fun MainScene() {
       LazyColumn(state = scrollState, modifier = Modifier.padding(padding)) {
         items(listItems) {
           Column(modifier = Modifier
+            .fillMaxWidth()
             .clickable { Intent(Intent.ACTION_VIEW, Uri.parse(it?.url)).also { context.startActivity(it) } }
             .padding(10.dp)) {
             Text(

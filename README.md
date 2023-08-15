@@ -1,7 +1,5 @@
 # 중랑 여성인력 개발센터 교육강좌
-[![Platform (Android)](https://img.shields.io/badge/platform-Android-blue.svg?style=flat-square)](http://www.android.com)
-![Language(Jetpack Compose)](https://img.shields.io/badge/language-Jetpack_Compose-red)
-
+[![Platform(Android)](https://img.shields.io/badge/platform-android-blue)](http://www.android.com)![Language(Jetpack Compose)](https://img.shields.io/badge/language-Jetpack_Compose-red)
 
 [서울 열린 데이터 광장](http://data.seoul.go.kr)을 이용한 신기술 연습용 프로젝트
 

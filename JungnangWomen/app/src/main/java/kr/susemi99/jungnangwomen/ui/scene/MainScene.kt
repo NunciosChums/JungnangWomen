@@ -20,12 +20,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import kotlinx.coroutines.launch
 import kr.susemi99.jungnangwomen.R
 import kr.susemi99.jungnangwomen.ui.theme.RowTitleColor
@@ -59,7 +58,11 @@ fun MainScene() {
       NoResultView()
     } else {
       LazyColumn(state = scrollState, modifier = Modifier.padding(padding)) {
-        items(listItems) {
+        items(
+          count = listItems.itemCount,
+          key = listItems.itemKey { it.id },
+        ) { index ->
+          val it = listItems[index]
           Column(modifier = Modifier
             .fillMaxWidth()
             .clickable { Intent(Intent.ACTION_VIEW, Uri.parse(it?.url)).also { context.startActivity(it) } }

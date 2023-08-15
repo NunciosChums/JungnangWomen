@@ -88,7 +88,7 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
 
   // pagination
-  implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+  implementation("androidx.paging:paging-compose:3.2.0")
 
   // hilt
   implementation("com.google.dagger:hilt-android:2.47")

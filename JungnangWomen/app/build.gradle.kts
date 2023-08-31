@@ -79,7 +79,7 @@ dependencies {
   implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.9")
 
   // json
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
   // logcat
   implementation("com.jakewharton.timber:timber:5.0.1")
@@ -91,6 +91,6 @@ dependencies {
   implementation("androidx.paging:paging-compose:3.2.0")
 
   // hilt
-  implementation("com.google.dagger:hilt-android:2.47")
-  kapt("com.google.dagger:hilt-android-compiler:2.47")
+  implementation("com.google.dagger:hilt-android:2.48")
+  kapt("com.google.dagger:hilt-android-compiler:2.48")
 }

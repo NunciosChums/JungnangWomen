@@ -4,9 +4,9 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
-  id("kotlinx-serialization")
-  id("kotlin-kapt")
-  id("dagger.hilt.android.plugin")
+  alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.hilt)
+  alias(libs.plugins.kotlin.kapt)
 }
 
 android {

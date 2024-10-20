@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +44,7 @@ fun MainScene() {
       TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         modifier = Modifier.shadow(4.dp),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(R.color.status_bar)),
         actions = {
           IconButton(onClick = {
             listItems.refresh()
@@ -79,7 +81,7 @@ fun MainScene() {
             RowView("수강료", "${it?.fee}")
             RowView("접수", "${it?.howToRegister}")
           }
-          Divider()
+          HorizontalDivider()
         }
       }
     }

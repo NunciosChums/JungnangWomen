@@ -17,8 +17,8 @@ android {
     applicationId = "kr.susemi99.jungnangwomen"
     minSdk = 26
     targetSdk = 36
-    versionCode = 19
-    versionName = "7"
+    versionCode = 20
+    versionName = "8"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "API_KEY", readProperty("API_KEY"))
@@ -54,6 +54,7 @@ dependencies {
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+  implementation(libs.androidx.material.icons.extended)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)

@@ -1,7 +1,6 @@
 package kr.susemi99.jungnangwomen.ui.scene
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -50,7 +50,7 @@ fun MainScene() {
               scrollState.scrollToItem(0)
             }
           }) {
-            Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
+            Icon(imageVector = Icons.Filled.Refresh, contentDescription = "refresh")
           }
         })
     }) { padding ->
@@ -63,9 +63,10 @@ fun MainScene() {
           key = listItems.itemKey { it.id },
         ) { index ->
           val it = listItems[index]
-          Column(modifier = Modifier
+          Column(
+            modifier = Modifier
             .fillMaxWidth()
-            .clickable { Intent(Intent.ACTION_VIEW, Uri.parse(it?.url)).also { context.startActivity(it) } }
+            .clickable { Intent(Intent.ACTION_VIEW, it?.url?.toUri()).also { context.startActivity(it) } }
             .padding(10.dp)) {
             Text(
               buildAnnotatedString {

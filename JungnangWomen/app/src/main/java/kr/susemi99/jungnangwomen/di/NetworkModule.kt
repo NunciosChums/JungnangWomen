@@ -47,18 +47,16 @@ object NetworkModule {
     }
   }
 
-  @Provides
-  fun provideUrl(): String {
-    return "http://openapi.seoul.go.kr:8088/${BuildConfig.API_KEY}/json/SeoulJungNangWomenResourcesClass/"
-  }
+  // TODO(#15): 서울 열린데이터광장 OpenAPI가 HTTPS를 제공하면 https://로 전환하고 usesCleartextTraffic 제거
+  private const val BASE_URL = "http://openapi.seoul.go.kr:8088/"
 
   @ExperimentalSerializationApi
   @Provides
   @Singleton
-  fun provideRetrofit(okHttpClient: OkHttpClient, json: Json, url: String): Retrofit =
+  fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit =
     Retrofit.Builder().apply {
       addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-      baseUrl(url)
+      baseUrl("$BASE_URL${BuildConfig.API_KEY}/json/SeoulJungNangWomenResourcesClass/")
       client(okHttpClient)
     }.build()
 

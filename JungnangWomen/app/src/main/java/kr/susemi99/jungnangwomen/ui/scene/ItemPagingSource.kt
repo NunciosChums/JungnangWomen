@@ -18,9 +18,9 @@ class ItemPagingSource constructor(private val api: Api) : PagingSource<Int, Row
   override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RowItem> {
     val nextPage = params.key ?: itemsPerPage
     val currentPage = nextPage - itemsPerPage
-    val result = api.list(startIndex = currentPage, endIndex = nextPage)
 
     return try {
+      val result = api.list(startIndex = currentPage, endIndex = nextPage)
       LoadResult.Page(
         data = result.classItem?.rows ?: listOf(),
         prevKey = if (nextPage == itemsPerPage) null else nextPage - 1,

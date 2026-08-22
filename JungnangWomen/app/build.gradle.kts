@@ -1,22 +1,21 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
 
 plugins {
   alias(libs.plugins.android.application)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.hilt)
-  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.ksp)
 }
 
 android {
   namespace = "kr.susemi99.jungnangwomen"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "kr.susemi99.jungnangwomen"
     minSdk = 26
-    targetSdk = 36
+    targetSdk = 37
     versionCode = 20
     versionName = "8"
 
@@ -34,16 +33,17 @@ android {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
   }
-  kotlin {
-    jvmToolchain(17)
-  }
   buildFeatures {
     compose = true
     buildConfig = true
   }
 }
 
-fun readProperty(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
+fun readProperty(key: String): String {
+  val file = rootProject.file("local.properties")
+  val props = Properties().apply { if (file.exists()) file.inputStream().use { load(it) } }
+  return props.getProperty(key) ?: error("local.properties 에 $key 가 없습니다")
+}
 
 dependencies {
   implementation(libs.androidx.core.ktx)
@@ -83,5 +83,5 @@ dependencies {
 
   // hilt
   implementation(libs.hilt.android)
-  kapt(libs.hilt.android.compiler)
+  ksp(libs.hilt.android.compiler)
 }

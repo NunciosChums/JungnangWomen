@@ -7,11 +7,9 @@ import kr.susemi99.jungnangwomen.extension.comma
 import kr.susemi99.jungnangwomen.extension.dayName
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.UUID
 
 @Serializable
 data class RowItem(
-  val id: String = UUID.randomUUID().toString(),
   @SerialName("CLASS_CODE") val classCode: String,
   @SerialName("CLASS_NAME") val className: String,
   @SerialName("ORGAN_CODE") val organCode: String,
@@ -40,6 +38,12 @@ data class RowItem(
   @SerialName("ONLINE_RECEIVE_FLAG") val onlineReceiveFlag: String,
   @SerialName("URL") val url: String
 ) {
+  /**
+   * 목록 키로 사용하는 안정적인 식별자 (기관 코드 + 강좌 코드)
+   */
+  val key
+    get() = "${organCode}_${classCode}"
+
   /**
    * 난이도
    */

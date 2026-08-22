@@ -13,5 +13,5 @@ import javax.inject.Inject
 class MainSceneViewModel @Inject constructor(
   private val api: Api
 ) : ViewModel() {
-  val list = Pager(PagingConfig(pageSize = 3)) { ItemPagingSource(api) }.flow.cachedIn(viewModelScope)
+  val list = Pager(PagingConfig(pageSize = ItemPagingSource.PAGE_SIZE)) { ItemPagingSource(api) }.flow.cachedIn(viewModelScope)
 }

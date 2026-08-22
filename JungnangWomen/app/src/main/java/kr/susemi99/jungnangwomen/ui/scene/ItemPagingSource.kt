@@ -3,6 +3,7 @@ package kr.susemi99.jungnangwomen.ui.scene
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kr.susemi99.jungnangwomen.api.Api
+import kr.susemi99.jungnangwomen.api.ApiException
 import kr.susemi99.jungnangwomen.model.RowItem
 
 /**
@@ -26,6 +27,11 @@ class ItemPagingSource constructor(private val api: Api) : PagingSource<Int, Row
 
     return try {
       val result = api.list(startIndex = startIndex, endIndex = endIndex)
+      // 오류 시 classItem 대신 최상위 RESULT 에 코드가 담겨 온다 (INFO-200 은 단순히 결과 없음).
+      val resultItem = result.classItem?.result ?: result.result
+      if (resultItem != null && resultItem.code !in SUCCESS_CODES) {
+        return LoadResult.Error(ApiException(resultItem.code, resultItem.message))
+      }
       val totalCount = result.classItem?.listTotalCount ?: 0
       LoadResult.Page(
         data = result.classItem?.rows ?: listOf(),
@@ -40,5 +46,6 @@ class ItemPagingSource constructor(private val api: Api) : PagingSource<Int, Row
   companion object {
     const val FIRST_PAGE = 1
     const val PAGE_SIZE = 30
+    private val SUCCESS_CODES = setOf("INFO-000", "INFO-200")
   }
 }

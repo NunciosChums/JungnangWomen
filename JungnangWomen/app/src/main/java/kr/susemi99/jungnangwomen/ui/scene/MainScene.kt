@@ -40,11 +40,14 @@ fun MainScene() {
   val coroutineScope = rememberCoroutineScope()
   val context = LocalContext.current
 
+  // 상태바·내비게이션바뿐 아니라 디스플레이 컷아웃(가로 모드 측면 노치)까지 피하도록 safeDrawing 사용
   Scaffold(
+    contentWindowInsets = WindowInsets.safeDrawing,
     topBar = {
       TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         modifier = Modifier.shadow(4.dp),
+        windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
         actions = {
           IconButton(onClick = {
             listItems.refresh()
@@ -64,9 +67,10 @@ fun MainScene() {
         modifier = Modifier.padding(padding)
       )
     } else if (listItems.itemCount == 0 && listItems.loadState.prepend.endOfPaginationReached) {
-      NoResultView()
+      NoResultView(modifier = Modifier.padding(padding))
     } else {
-      LazyColumn(state = scrollState, modifier = Modifier.padding(padding)) {
+      // contentPadding으로 넘겨 리스트가 내비게이션바 뒤까지 스크롤되되 마지막 항목은 가려지지 않게 한다.
+      LazyColumn(state = scrollState, contentPadding = padding) {
         items(
           count = listItems.itemCount,
           key = listItems.itemKey { it.key },
@@ -97,10 +101,10 @@ fun MainScene() {
 }
 
 @Composable
-fun NoResultView() {
+fun NoResultView(modifier: Modifier = Modifier) {
   Column(
     verticalArrangement = Arrangement.Center,
-    modifier = Modifier.fillMaxSize()
+    modifier = modifier.fillMaxSize()
   ) {
     Text(
       text = stringResource(id = R.string.no_result),

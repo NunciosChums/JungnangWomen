@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import kotlinx.coroutines.launch
@@ -54,7 +56,14 @@ fun MainScene() {
           }
         })
     }) { padding ->
-    if (listItems.itemCount == 0 && listItems.loadState.prepend.endOfPaginationReached) {
+    val refreshState = listItems.loadState.refresh
+    if (refreshState is LoadState.Error) {
+      ErrorView(
+        message = refreshState.error.message ?: stringResource(id = R.string.unknown_error),
+        onRetry = { listItems.retry() },
+        modifier = Modifier.padding(padding)
+      )
+    } else if (listItems.itemCount == 0 && listItems.loadState.prepend.endOfPaginationReached) {
       NoResultView()
     } else {
       LazyColumn(state = scrollState, modifier = Modifier.padding(padding)) {
@@ -99,6 +108,35 @@ fun NoResultView() {
       fontSize = 20.sp,
       modifier = Modifier.fillMaxWidth()
     )
+  }
+}
+
+@Composable
+fun ErrorView(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+  Column(
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = modifier
+      .fillMaxSize()
+      .padding(20.dp)
+  ) {
+    Text(
+      text = stringResource(id = R.string.load_error),
+      textAlign = TextAlign.Center,
+      fontSize = 20.sp,
+      modifier = Modifier.fillMaxWidth()
+    )
+    Text(
+      text = message,
+      textAlign = TextAlign.Center,
+      fontSize = 14.sp,
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 10.dp)
+    )
+    Button(onClick = onRetry, modifier = Modifier.padding(top = 20.dp)) {
+      Text(text = stringResource(id = R.string.retry))
+    }
   }
 }
 

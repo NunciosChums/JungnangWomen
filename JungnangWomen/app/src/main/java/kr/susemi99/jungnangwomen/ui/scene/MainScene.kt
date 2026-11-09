@@ -1,6 +1,9 @@
 package kr.susemi99.jungnangwomen.ui.scene
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,8 +35,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import kotlinx.coroutines.launch
 import kr.susemi99.jungnangwomen.R
+import kr.susemi99.jungnangwomen.api.ApiException
 import kr.susemi99.jungnangwomen.model.RowItem
-import kr.susemi99.jungnangwomen.ui.theme.RowTitleColor
+import java.io.IOException
 
 @Composable
 fun MainScene() {
@@ -66,43 +72,74 @@ fun MainContent(listItems: LazyPagingItems<RowItem>) {
         })
     }) { padding ->
     val refreshState = listItems.loadState.refresh
-    if (refreshState is LoadState.Error) {
-      ErrorView(
-        message = refreshState.error.message ?: stringResource(id = R.string.unknown_error),
-        onRetry = { listItems.retry() },
-        modifier = Modifier.padding(padding)
-      )
-    } else if (listItems.itemCount == 0 && listItems.loadState.prepend.endOfPaginationReached) {
-      NoResultView(modifier = Modifier.padding(padding))
-    } else {
-      // contentPadding으로 넘겨 리스트가 내비게이션바 뒤까지 스크롤되되 마지막 항목은 가려지지 않게 한다.
-      LazyColumn(state = scrollState, contentPadding = padding) {
-        items(
-          count = listItems.itemCount,
-          key = listItems.itemKey { it.key },
-        ) { index ->
-          val it = listItems[index]
-          Column(
-            modifier = Modifier
-            .fillMaxWidth()
-            .clickable { Intent(Intent.ACTION_VIEW, it?.url?.toUri()).also { context.startActivity(it) } }
-            .padding(10.dp)) {
-            Text(
-              buildAnnotatedString {
-                withStyle(style = SpanStyle(color = RowTitleColor, fontSize = 16.sp)) { append("${it?.difficulty} ") }
-                withStyle(style = SpanStyle(color = RowTitleColor, fontSize = 20.sp)) { append("${it?.className}") }
-              }
-            )
-            RowView("신청기간", "${it?.receivePeriod}")
-            RowView("교육기간", "${it?.educatePeriod} ${it?.educateDays}")
-            RowView("잔여", "${it?.remainNumber}")
-            RowView("수강료", "${it?.fee}")
-            RowView("접수", "${it?.howToRegister}")
+    Box(modifier = Modifier.fillMaxSize()) {
+      if (refreshState is LoadState.Error) {
+        ErrorView(
+          message = errorMessage(refreshState.error),
+          onRetry = { listItems.retry() },
+          modifier = Modifier.padding(padding)
+        )
+      } else if (listItems.itemCount == 0 && refreshState is LoadState.NotLoading && listItems.loadState.prepend.endOfPaginationReached) {
+        NoResultView(modifier = Modifier.padding(padding))
+      } else {
+        // contentPadding으로 넘겨 리스트가 내비게이션바 뒤까지 스크롤되되 마지막 항목은 가려지지 않게 한다.
+        LazyColumn(state = scrollState, contentPadding = padding) {
+          items(
+            count = listItems.itemCount,
+            key = listItems.itemKey { it.key },
+          ) { index ->
+            val it = listItems[index]
+            val titleColor = MaterialTheme.colorScheme.primary
+            Column(
+              modifier = Modifier
+              .fillMaxWidth()
+              .clickable { it?.url?.let(context::openLink) }
+              .padding(10.dp)) {
+              Text(
+                buildAnnotatedString {
+                  withStyle(style = SpanStyle(color = titleColor, fontSize = 16.sp)) { append("${it?.difficulty} ") }
+                  withStyle(style = SpanStyle(color = titleColor, fontSize = 20.sp)) { append("${it?.className}") }
+                }
+              )
+              RowView("신청기간", "${it?.receivePeriod}")
+              RowView("교육기간", "${it?.educatePeriod} ${it?.educateDays}")
+              RowView("잔여", "${it?.remainNumber}")
+              RowView("수강료", "${it?.fee}")
+              RowView("접수", "${it?.howToRegister}")
+            }
+            HorizontalDivider()
           }
-          HorizontalDivider()
         }
       }
+      if (refreshState is LoadState.Loading) {
+        LoadingView(modifier = Modifier.padding(padding))
+      }
     }
+  }
+}
+
+/** URL이 비었거나 열 수 있는 앱이 없어도 앱이 종료되지 않도록 안내만 표시한다. */
+private fun Context.openLink(url: String) {
+  try {
+    startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+  } catch (_: ActivityNotFoundException) {
+    Toast.makeText(this, R.string.link_open_error, Toast.LENGTH_SHORT).show()
+  }
+}
+
+/** 서버가 보낸 [ApiException]의 메시지만 그대로 보여 주고, 나머지 예외의 원문은 안내 문구로 바꾼다. */
+@Composable
+private fun errorMessage(error: Throwable): String = when (error) {
+  is ApiException -> error.message
+  is IOException -> stringResource(id = R.string.network_error)
+  else -> null
+} ?: stringResource(id = R.string.unknown_error)
+
+@Composable
+fun LoadingView(modifier: Modifier = Modifier) {
+  val description = stringResource(id = R.string.loading)
+  Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
+    CircularProgressIndicator(modifier = Modifier.semantics { contentDescription = description })
   }
 }
 

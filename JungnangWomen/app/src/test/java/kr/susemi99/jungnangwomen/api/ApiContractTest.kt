@@ -64,6 +64,31 @@ class ApiContractTest {
   }
 
   @Test
+  fun `날짜나 시간이 빈 값인 행만 제외하고 나머지 행은 파싱한다`() = runBlocking {
+    val original = fixture("list_success.json")
+    val originalRows = checkNotNull(apiRespondingWith(original).list(1, 3).classItem).rows
+
+    for (field in listOf("\"RECEIVE_FROM\":\"20261102\"", "\"EDUCATE_TIME_FROM\":\"14:00\"")) {
+      val broken = original.replaceFirst(field, field.substringBefore(':') + ":\"\"")
+
+      val classItem = checkNotNull(apiRespondingWith(broken).list(1, 3).classItem)
+
+      assertEquals(field, originalRows.drop(1), classItem.rows)
+      assertEquals(29, classItem.listTotalCount)
+    }
+  }
+
+  @Test
+  fun `필수 항목이 없는 행도 제외한다`() = runBlocking {
+    val row = """{"CLASS_CODE":"C1"}"""
+    val body = """{"SeoulJungNangWomenResourcesClass":{"list_total_count":1,"RESULT":{"CODE":"INFO-000","MESSAGE":"OK"},"row":[$row]}}"""
+
+    val classItem = checkNotNull(apiRespondingWith(body).list(1, 30).classItem)
+
+    assertTrue(classItem.rows.isEmpty())
+  }
+
+  @Test
   fun `결과 없음 응답은 최상위 RESULT로 파싱한다`() = runBlocking {
     val response = apiRespondingWith(fixture("list_no_data.json")).list(99901, 99930)
 

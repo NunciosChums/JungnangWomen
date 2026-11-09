@@ -3,6 +3,7 @@ package kr.susemi99.jungnangwomen.ui.scene
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.testing.TestPager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kr.susemi99.jungnangwomen.api.Api
 import kr.susemi99.jungnangwomen.api.ApiException
@@ -17,6 +18,7 @@ import kr.susemi99.jungnangwomen.ui.scene.ItemPagingSource.Companion.PAGE_SIZE
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.IOException
@@ -118,6 +120,13 @@ class ItemPagingSourceTest {
     val result = pagerFor(FakeApi { throw exception }).refresh().asError()
 
     assertSame(exception, result.throwable)
+  }
+
+  @Test
+  fun `코루틴 취소는 오류로 바꾸지 않고 다시 던진다`() {
+    assertThrows(CancellationException::class.java) {
+      runBlocking { pagerFor(FakeApi { throw CancellationException("취소") }).refresh() }
+    }
   }
 
   @Test

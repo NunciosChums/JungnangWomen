@@ -22,6 +22,6 @@ class MainActivitySmokeTest {
   @Test
   fun 앱이_실행되면_상단바를_표시한다() {
     composeRule.onNodeWithText(composeRule.activity.getString(R.string.app_name)).assertIsDisplayed()
-    composeRule.onNodeWithContentDescription("refresh").assertIsDisplayed()
+    composeRule.onNodeWithContentDescription(composeRule.activity.getString(R.string.refresh)).assertIsDisplayed()
   }
 }

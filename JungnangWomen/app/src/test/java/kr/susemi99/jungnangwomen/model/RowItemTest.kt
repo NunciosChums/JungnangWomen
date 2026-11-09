@@ -52,38 +52,25 @@ class RowItemTest {
   }
 
   @Test
-  fun `교육 기간이 하루면 날짜를 한 번만 표시한다`() {
-    assertEquals("2026-03-02(월)", rowItem(educateFrom = monday, educateTo = monday).educatePeriod)
+  fun `하루 교육은 날짜와 시간을 한 줄로 표시하고 요일 플래그는 쓰지 않는다`() {
+    assertEquals(
+      "2026-03-02(월) 14:00 ~ 17:00",
+      rowItem(educateFrom = monday, educateTo = monday, monday = "Y").educateSchedule,
+    )
   }
 
   @Test
   fun `기기 언어가 영어여도 요일은 한국어로 표시한다`() {
     Locale.setDefault(Locale.US)
 
-    assertEquals("2026-03-02(월)", rowItem(educateFrom = monday, educateTo = monday).educatePeriod)
+    assertEquals("2026-03-02(월) 14:00 ~ 17:00", rowItem(educateFrom = monday, educateTo = monday).educateSchedule)
   }
 
   @Test
-  fun `교육 기간이 여러 날이면 시작과 끝을 표시한다`() {
+  fun `여러 날 교육은 기간과 값이 Y인 요일, 시간을 줄을 나눠 표시한다`() {
     assertEquals(
-      "2026-03-02(월) ~ 2026-03-06(금)",
-      rowItem(educateFrom = monday, educateTo = friday).educatePeriod,
-    )
-  }
-
-  @Test
-  fun `하루 교육은 요일 없이 시간만 표시한다`() {
-    assertEquals(
-      "14:00 ~ 17:00",
-      rowItem(educateFrom = monday, educateTo = monday, monday = "Y").educateDays,
-    )
-  }
-
-  @Test
-  fun `여러 날 교육은 값이 Y인 요일과 시간을 표시한다`() {
-    assertEquals(
-      "\n월수금\n14:00 ~ 17:00",
-      rowItem(monday = "Y", tuesday = " ", wednesday = "Y", friday = "Y").educateDays,
+      "2026-03-02(월) ~ 2026-03-06(금)\n월수금\n14:00 ~ 17:00",
+      rowItem(educateFrom = monday, educateTo = friday, monday = "Y", tuesday = " ", wednesday = "Y", friday = "Y").educateSchedule,
     )
   }
 
@@ -91,8 +78,10 @@ class RowItemTest {
   @Test
   fun `진행하지 않는 요일 N은 표시하지 않는다`() {
     assertEquals(
-      "\n월화수목금\n14:00 ~ 17:00",
+      "2026-03-02(월) ~ 2026-03-06(금)\n월화수목금\n14:00 ~ 17:00",
       rowItem(
+        educateFrom = monday,
+        educateTo = friday,
         monday = "Y",
         tuesday = "Y",
         wednesday = "Y",
@@ -100,7 +89,7 @@ class RowItemTest {
         friday = "Y",
         saturday = "N",
         sunday = "N",
-      ).educateDays,
+      ).educateSchedule,
     )
   }
 
@@ -125,5 +114,10 @@ class RowItemTest {
     assertEquals("방문", rowItem(visitReceiveFlag = "Y", onlineReceiveFlag = "N").howToRegister)
     assertEquals("온라인", rowItem(visitReceiveFlag = "N", onlineReceiveFlag = "Y").howToRegister)
     assertEquals("접수방법 확인", rowItem(visitReceiveFlag = "N", onlineReceiveFlag = "N").howToRegister)
+  }
+
+  @Test
+  fun `접수 플래그가 공백이어도 안내 문구를 표시한다`() {
+    assertEquals("접수방법 확인", rowItem(visitReceiveFlag = " ", onlineReceiveFlag = " ").howToRegister)
   }
 }

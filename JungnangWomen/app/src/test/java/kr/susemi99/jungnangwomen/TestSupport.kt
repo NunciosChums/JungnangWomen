@@ -1,6 +1,5 @@
 package kr.susemi99.jungnangwomen
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kr.susemi99.jungnangwomen.api.Api
 import kr.susemi99.jungnangwomen.di.NetworkModule
 import kr.susemi99.jungnangwomen.model.RowItem
@@ -23,7 +22,6 @@ fun fixture(name: String): String =
  * 네트워크 없이 항상 [body]를 HTTP 200으로 돌려주는 [Api].
  * 앱과 같은 [NetworkModule] 설정을 쓰므로 Retrofit, converter, Json 경로 전체를 검증한다.
  */
-@OptIn(ExperimentalSerializationApi::class)
 fun apiRespondingWith(body: String, onRequest: (Request) -> Unit = {}): Api {
   val client = OkHttpClient.Builder()
     .addInterceptor { chain ->

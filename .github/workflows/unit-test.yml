@@ -1,0 +1,28 @@
+name: Unit test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: JungnangWomen
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: jetbrains
+          java-version: 21
+          cache: gradle
+      # build.gradle.kts가 API_KEY를 필수로 읽는다. 단위 테스트는 실제 API를 호출하지 않으므로 임의의 값을 쓴다.
+      - name: Create local.properties
+        run: echo 'API_KEY="ci"' > local.properties
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest

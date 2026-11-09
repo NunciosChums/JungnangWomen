@@ -62,17 +62,16 @@ dependencies {
   implementation(composeBom)
   implementation(libs.androidx.ui)
   implementation(libs.androidx.ui.graphics)
-  implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
-  implementation(libs.androidx.material.icons.extended)
+  implementation(libs.androidx.material.icons.core)
 
   testImplementation(libs.junit)
   testImplementation(libs.androidx.paging.testing)
   androidTestImplementation(libs.androidx.junit)
+  // 코드에서 직접 쓰지 않지만 ui-test-junit4가 끌어오는 구버전은 API 37에서 실패하므로 버전을 고정한다.
   androidTestImplementation(libs.androidx.espresso.core)
   androidTestImplementation(composeBom)
   androidTestImplementation(libs.androidx.ui.test.junit4)
-  debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
 
   // api
@@ -83,9 +82,6 @@ dependencies {
   // json
   implementation(libs.kotlinx.serialization.json)
 
-  // logcat
-  implementation(libs.timber)
-
   // view model
   implementation(libs.androidx.lifecycle.viewmodel.compose)
 
@@ -95,5 +91,5 @@ dependencies {
   // hilt
   implementation(libs.hilt.android)
   ksp(libs.hilt.android.compiler)
-  implementation(libs.androidx.hilt.navigation.compose)
+  implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 }

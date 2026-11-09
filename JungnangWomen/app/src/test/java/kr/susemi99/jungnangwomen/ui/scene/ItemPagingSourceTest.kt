@@ -128,13 +128,32 @@ class ItemPagingSourceTest {
   }
 
   @Test
-  fun `새로고침 키는 현재 보고 있는 페이지 번호다`() = runBlocking {
-    val source = ItemPagingSource(FakeApi { success(totalCount = 90) })
+  fun `새로고침은 보고 있는 위치와 관계없이 첫 페이지부터 불러온다`() = runBlocking {
+    var nextCode = 0
+    val source = ItemPagingSource(FakeApi { success(totalCount = 90, rows = List(PAGE_SIZE) { rowItem(classCode = "C${nextCode++}") }) })
     val pager = TestPager(PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false), source)
     pager.refresh()
     pager.append()
 
-    assertEquals(1, source.getRefreshKey(pager.getPagingState(anchorPosition = 10)))
-    assertEquals(2, source.getRefreshKey(pager.getPagingState(anchorPosition = 40)))
+    assertNull(source.getRefreshKey(pager.getPagingState(anchorPosition = 10)))
+    assertNull(source.getRefreshKey(pager.getPagingState(anchorPosition = 40)))
+  }
+
+  @Test
+  fun `이미 받은 강좌가 다음 페이지에 다시 오면 제외한다`() = runBlocking {
+    var call = 0
+    val api = FakeApi {
+      // 두 번째 응답의 첫 행은 첫 번째 응답의 마지막 행과 같다.
+      val first = (call++) * (PAGE_SIZE - 1)
+      success(totalCount = 90, rows = List(PAGE_SIZE) { rowItem(classCode = "C${first + it}") })
+    }
+    val pager = pagerFor(api)
+
+    pager.refresh()
+    val page = checkNotNull(pager.append()).asPage()
+
+    assertEquals(PAGE_SIZE - 1, page.data.size)
+    assertEquals("C$PAGE_SIZE", page.data.first().classCode)
+    assertEquals(3, page.nextKey)
   }
 }

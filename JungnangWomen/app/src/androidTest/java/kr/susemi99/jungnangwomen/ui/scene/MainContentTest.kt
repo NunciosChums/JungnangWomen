@@ -22,8 +22,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.net.UnknownHostException
-import java.time.LocalDate
-import java.time.LocalTime
 
 /** 네트워크 없이 목록 화면의 상태별 표시를 확인한다. */
 @RunWith(AndroidJUnit4::class)
@@ -134,33 +132,5 @@ class MainContentTest {
     composeRule.runOnIdle { assertEquals(1, retryCount) }
   }
 
-  private val row = RowItem(
-    classCode = "C1",
-    className = "테스트 강좌",
-    organCode = "25",
-    organName = "중랑여성인력개발센터",
-    difficultyCode = "J",
-    difficultyName = "초급",
-    receiveFrom = LocalDate.of(2026, 3, 2),
-    receiveTo = LocalDate.of(2026, 3, 6),
-    receiveTimeFrom = LocalTime.of(9, 0),
-    receiveTimeTo = LocalTime.of(18, 0),
-    educateFrom = LocalDate.of(2026, 3, 9),
-    educateTo = LocalDate.of(2026, 3, 13),
-    educateTimeFrom = LocalTime.of(14, 0),
-    educateTimeTo = LocalTime.of(17, 0),
-    monday = "Y",
-    tuesday = null,
-    wednesday = "Y",
-    thursday = null,
-    friday = "Y",
-    saturday = null,
-    sunday = null,
-    collectNum = 20f,
-    spareNum = 5f,
-    educateFee = 100000f,
-    visitReceiveFlag = "Y",
-    onlineReceiveFlag = "Y",
-    url = "https://example.com/class",
-  )
+  private val row = testRow()
 }

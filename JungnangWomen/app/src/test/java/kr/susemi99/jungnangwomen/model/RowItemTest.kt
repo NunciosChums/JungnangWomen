@@ -13,7 +13,7 @@ class RowItemTest {
   private val friday = LocalDate.of(2026, 3, 6)
   private lateinit var originalLocale: Locale
 
-  // 요일 이름과 천 단위 구분 기호가 기본 로캘을 따르므로 고정한다.
+  // 천 단위 구분 기호가 기본 로캘을 따르므로 고정한다.
   @Before
   fun setUp() {
     originalLocale = Locale.getDefault()
@@ -53,6 +53,13 @@ class RowItemTest {
 
   @Test
   fun `교육 기간이 하루면 날짜를 한 번만 표시한다`() {
+    assertEquals("2026-03-02(월)", rowItem(educateFrom = monday, educateTo = monday).educatePeriod)
+  }
+
+  @Test
+  fun `기기 언어가 영어여도 요일은 한국어로 표시한다`() {
+    Locale.setDefault(Locale.US)
+
     assertEquals("2026-03-02(월)", rowItem(educateFrom = monday, educateTo = monday).educatePeriod)
   }
 

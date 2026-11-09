@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <!-- 서울 열린데이터광장 OpenAPI가 HTTPS를 제공하지 않아 이 도메인만 평문 통신을 허용한다. (#15) -->
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="false">openapi.seoul.go.kr</domain>
+  </domain-config>
+</network-security-config>

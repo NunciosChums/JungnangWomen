@@ -12,6 +12,7 @@ import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.plus
 import kr.susemi99.jungnangwomen.BuildConfig
 import kr.susemi99.jungnangwomen.api.Api
+import kr.susemi99.jungnangwomen.api.XmlErrorConverterFactory
 import kr.susemi99.jungnangwomen.util.serializer.LocalDateSerializer
 import kr.susemi99.jungnangwomen.util.serializer.LocalTimeSerializer
 import okhttp3.MediaType.Companion.toMediaType
@@ -55,6 +56,7 @@ object NetworkModule {
   @Singleton
   fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit =
     Retrofit.Builder().apply {
+      addConverterFactory(XmlErrorConverterFactory())
       addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
       baseUrl("$BASE_URL${BuildConfig.API_KEY}/json/SeoulJungNangWomenResourcesClass/")
       client(okHttpClient)

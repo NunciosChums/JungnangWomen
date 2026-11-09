@@ -25,17 +25,23 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import kotlinx.coroutines.launch
 import kr.susemi99.jungnangwomen.R
+import kr.susemi99.jungnangwomen.model.RowItem
 import kr.susemi99.jungnangwomen.ui.theme.RowTitleColor
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScene() {
   val viewModel = hiltViewModel<MainSceneViewModel>()
-  val listItems = viewModel.list.collectAsLazyPagingItems()
+  MainContent(listItems = viewModel.list.collectAsLazyPagingItems())
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainContent(listItems: LazyPagingItems<RowItem>) {
   val scrollState = rememberLazyListState()
   val coroutineScope = rememberCoroutineScope()
   val context = LocalContext.current

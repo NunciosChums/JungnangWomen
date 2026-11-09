@@ -2,6 +2,7 @@ package kr.susemi99.jungnangwomen.ui.scene
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.CancellationException
 import kr.susemi99.jungnangwomen.api.Api
 import kr.susemi99.jungnangwomen.api.ApiException
 import kr.susemi99.jungnangwomen.model.RowItem
@@ -37,6 +38,8 @@ class ItemPagingSource constructor(private val api: Api) : PagingSource<Int, Row
         prevKey = if (page == FIRST_PAGE) null else page - 1,
         nextKey = if (endIndex < totalCount) page + 1 else null
       )
+    } catch (e: CancellationException) {
+      throw e
     } catch (e: Exception) {
       LoadResult.Error(e)
     }

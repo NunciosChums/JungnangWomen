@@ -17,6 +17,8 @@ import java.time.format.DateTimeFormatter
  */
 object LocalDateSerializer : KSerializer<LocalDate> {
   override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
-  override fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(value.toString())
-  override fun deserialize(decoder: Decoder): LocalDate = LocalDate.parse(decoder.decodeString(), DateTimeFormatter.ofPattern("yyyyMMdd"))
+  private val FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+  override fun serialize(encoder: Encoder, value: LocalDate) = encoder.encodeString(value.format(FORMATTER))
+  override fun deserialize(decoder: Decoder): LocalDate = LocalDate.parse(decoder.decodeString(), FORMATTER)
 }

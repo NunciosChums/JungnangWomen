@@ -7,4 +7,10 @@
   <string name="unknown_error">알 수 없는 오류가 발생했습니다.</string>
   <string name="link_open_error">링크를 열 수 없습니다.</string>
   <string name="retry">다시 시도</string>
+  <string name="refresh">새로고침</string>
+  <string name="label_receive_period">신청기간</string>
+  <string name="label_educate_schedule">교육기간</string>
+  <string name="label_remain">잔여</string>
+  <string name="label_fee">수강료</string>
+  <string name="label_register">접수</string>
 </resources>

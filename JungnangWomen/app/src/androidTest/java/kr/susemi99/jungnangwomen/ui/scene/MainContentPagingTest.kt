@@ -78,7 +78,7 @@ class MainContentPagingTest {
     scrollTo(PAGE_SIZE * 3 - 1)
     waitUntilTextExists("[초급] 강좌 90")
 
-    composeRule.onNodeWithContentDescription("refresh").performClick()
+    composeRule.onNodeWithContentDescription(context.getString(R.string.refresh)).performClick()
 
     waitUntilTextExists("[초급] 강좌 1")
     composeRule.onNodeWithText("[초급] 강좌 1").assertIsDisplayed()

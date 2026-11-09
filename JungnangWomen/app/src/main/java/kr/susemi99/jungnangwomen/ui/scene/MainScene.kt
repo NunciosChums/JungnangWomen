@@ -67,7 +67,7 @@ fun MainContent(listItems: LazyPagingItems<RowItem>) {
               scrollState.scrollToItem(0)
             }
           }) {
-            Icon(imageVector = Icons.Filled.Refresh, contentDescription = "refresh")
+            Icon(imageVector = Icons.Filled.Refresh, contentDescription = stringResource(id = R.string.refresh))
           }
         })
     }) { padding ->
@@ -88,25 +88,8 @@ fun MainContent(listItems: LazyPagingItems<RowItem>) {
             count = listItems.itemCount,
             key = listItems.itemKey { it.key },
           ) { index ->
-            val it = listItems[index]
-            val titleColor = MaterialTheme.colorScheme.primary
-            Column(
-              modifier = Modifier
-              .fillMaxWidth()
-              .clickable { it?.url?.let(context::openLink) }
-              .padding(10.dp)) {
-              Text(
-                buildAnnotatedString {
-                  withStyle(style = SpanStyle(color = titleColor, fontSize = 16.sp)) { append("${it?.difficulty} ") }
-                  withStyle(style = SpanStyle(color = titleColor, fontSize = 20.sp)) { append("${it?.className}") }
-                }
-              )
-              RowView("신청기간", "${it?.receivePeriod}")
-              RowView("교육기간", "${it?.educatePeriod} ${it?.educateDays}")
-              RowView("잔여", "${it?.remainNumber}")
-              RowView("수강료", "${it?.fee}")
-              RowView("접수", "${it?.howToRegister}")
-            }
+            val item = listItems[index] ?: return@items
+            ClassRow(item = item, onClick = { context.openLink(item.url) })
             HorizontalDivider()
           }
           val appendState = listItems.loadState.append
@@ -146,6 +129,29 @@ fun LoadingView(modifier: Modifier = Modifier) {
   val description = stringResource(id = R.string.loading)
   Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
     CircularProgressIndicator(modifier = Modifier.semantics { contentDescription = description })
+  }
+}
+
+@Composable
+fun ClassRow(item: RowItem, onClick: () -> Unit) {
+  val titleColor = MaterialTheme.colorScheme.primary
+  Column(
+    modifier = Modifier
+      .fillMaxWidth()
+      .clickable(onClick = onClick)
+      .padding(10.dp)
+  ) {
+    Text(
+      buildAnnotatedString {
+        withStyle(style = SpanStyle(color = titleColor, fontSize = 16.sp)) { append("${item.difficulty} ") }
+        withStyle(style = SpanStyle(color = titleColor, fontSize = 20.sp)) { append(item.className) }
+      }
+    )
+    RowView(stringResource(id = R.string.label_receive_period), item.receivePeriod)
+    RowView(stringResource(id = R.string.label_educate_schedule), item.educateSchedule)
+    RowView(stringResource(id = R.string.label_remain), item.remainNumber)
+    RowView(stringResource(id = R.string.label_fee), item.fee)
+    RowView(stringResource(id = R.string.label_register), item.howToRegister)
   }
 }
 

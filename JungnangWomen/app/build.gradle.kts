@@ -10,7 +10,9 @@ plugins {
 
 android {
   namespace = "kr.susemi99.jungnangwomen"
-  compileSdk = 37
+  compileSdk {
+    version = release(37)
+  }
 
   defaultConfig {
     applicationId = "kr.susemi99.jungnangwomen"

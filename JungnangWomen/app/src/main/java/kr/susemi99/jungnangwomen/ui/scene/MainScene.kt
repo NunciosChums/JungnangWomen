@@ -109,6 +109,12 @@ fun MainContent(listItems: LazyPagingItems<RowItem>) {
             }
             HorizontalDivider()
           }
+          val appendState = listItems.loadState.append
+          if (appendState is LoadState.Error) {
+            item(key = "append_error") {
+              AppendErrorView(message = errorMessage(appendState.error), onRetry = { listItems.retry() })
+            }
+          }
         }
       }
       if (refreshState is LoadState.Loading) {
@@ -182,6 +188,22 @@ fun ErrorView(message: String, onRetry: () -> Unit, modifier: Modifier = Modifie
         .padding(top = 10.dp)
     )
     Button(onClick = onRetry, modifier = Modifier.padding(top = 20.dp)) {
+      Text(text = stringResource(id = R.string.retry))
+    }
+  }
+}
+
+/** 다음 페이지를 불러오지 못했을 때 목록 맨 아래에 표시한다. */
+@Composable
+fun AppendErrorView(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(20.dp)
+  ) {
+    Text(text = message, textAlign = TextAlign.Center, fontSize = 14.sp)
+    Button(onClick = onRetry, modifier = Modifier.padding(top = 10.dp)) {
       Text(text = stringResource(id = R.string.retry))
     }
   }
